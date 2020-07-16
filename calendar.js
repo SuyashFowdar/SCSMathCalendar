@@ -1,3 +1,3 @@
-module.exports = {
+var data = {
 	"ev": "Today"
 }
