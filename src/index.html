@@ -1,0 +1,249 @@
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://cdn.jsdelivr.net/gh/krishnzzz/scsmath-data@14ca027/calendar.js"></script>
+<div id="app">
+	<div class="row w-flex x-center y-center monthHeader">
+		<div class="row h-100 w-flex x-center y-center clickable" @click="getPrev">{{ '<' }}</div> <div class="row h-100 w-flex x-center y-center clickable">{{ months[monthIndex].name }} {{ year }}</div>
+		<div class="row h-100 w-flex x-center y-center clickable" @click="getNext">{{ '>' }}</div>
+	</div>
+	<div class="row x-center">
+		<div class="column month w-75">
+			<div class="row">
+				<div class="row w-flex x-center day" v-for="(day, dayIndex) in days">{{ day.substring(0, 3) }}</div>
+			</div>
+			<div class="row w-flex" v-for="(week, weekIndex) in month">
+				<div v-for="(date, dateIndex) in week" :class="{ selectedDate:  monthIndex === selectedDate.month && year == selectedDate.year && date == selectedDate.date, today: monthIndex === today.month && year == today.year && date == today.date}" class="w-flex row x-center y-center date clickable" @click="selectDate(date, days[dateIndex])">{{ date }}</div>
+			</div>
+		</div>
+		<div class="w-25 events">
+		</div>
+	</div>
+</div>
+<script>
+var app = new Vue({
+	el: '#app',
+	data: function() {
+		return {
+			message: 'Hello Vue!',
+			month: [],
+			monthIndex: 0,
+			today: {},
+			months: [{ name: 'January', days: 31 }, { name: 'February', days: 28 }, { name: 'March', days: 31 }, { name: 'April', days: 30 }, { name: 'May', days: 31 }, { name: 'June', days: 30 }, { name: 'July', days: 31 }, { name: 'August', days: 31 }, { name: 'September', days: 30 }, { name: 'October', days: 31 }, { name: 'November', days: 30 }, { name: 'December', days: 31 }],
+			days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+			dayLastIndex: 0,
+			day1Index: 0,
+			year: 0,
+			selectedDate: {}
+		}
+	},
+	created: function() {
+		var vm = this;
+		var today = new Date()
+		vm.today = {
+			date: today.getDate(),
+			day: today.getDay(),
+			month: today.getMonth(),
+			year: today.getFullYear()
+		}
+		vm.monthIndex = vm.today.month;
+		vm.year = vm.today.year;
+		vm.checkFeb();
+		vm.getMonth(vm.today.date, vm.today.day);
+	},
+	methods: {
+		getMonth: function(date, dateIndex) {
+			var vm = this,
+				numOfDays = vm.months[vm.monthIndex].days;
+			vm.month = [];
+			if (date !== 1) {
+				vm.day1Index = ((dateIndex - (date % 7)) + 1 + 7) % 7;
+			} else {
+				vm.day1Index = dateIndex;
+			}
+
+			fillMonth(0, 1);
+
+			function fillMonth(weekNo, date) {
+				var lastWeek = false;
+				vm.month.push([]);
+				for (var i = 0; i < 7; i++) {
+					if ((weekNo == 0 && i < vm.day1Index) || lastWeek) {
+						vm.month[weekNo].push('');
+					} else if (date != numOfDays) {
+						vm.month[weekNo].push(date);
+						date++;
+					} else {
+						lastWeek = true;
+						vm.dayLastIndex = i;
+						vm.month[weekNo].push(date);
+					}
+				}
+				if (!lastWeek) {
+					fillMonth(weekNo + 1, date);
+				}
+			}
+		},
+		getPrev: function() {
+			var vm = this;
+			if (vm.monthIndex === 0) {
+				vm.monthIndex = 11;
+				vm.year--;
+			} else {
+				vm.monthIndex--;
+			}
+			vm.checkFeb();
+			if (vm.day1Index === 0) {
+				vm.getMonth(vm.months[vm.monthIndex].days, 6);
+			} else {
+				vm.getMonth(vm.months[vm.monthIndex].days, vm.day1Index - 1);
+			}
+		},
+		getNext: function() {
+			var vm = this;
+			if (vm.monthIndex === 11) {
+				vm.monthIndex = 0;
+				vm.year++;
+			} else {
+				vm.monthIndex++;
+			}
+			vm.checkFeb();
+			if (vm.dayLastIndex === 6) {
+				vm.getMonth(1, 0);
+			} else {
+				vm.getMonth(1, vm.dayLastIndex + 1);
+			}
+		},
+		checkFeb: function() {
+			var vm = this;
+			if (vm.monthIndex === 1 && (vm.year % 4) === 0) {
+				vm.months[1].days = 29;
+			} else {
+				vm.months[1].days = 28;
+			}
+		},
+		selectDate: function(date, day) {
+			var vm = this;
+			if (date) {
+				vm.selectedDate = {
+					date: date,
+					month: vm.monthIndex,
+					year: vm.year,
+					day: day
+				}
+			}
+		}
+	}
+})
+</script>
+<style>
+.month {
+	max-width: 500px;
+}
+
+.date {
+	cursor: pointer;
+	border-radius: 3px;
+}
+
+.day {
+	margin-bottom: 15px;
+}
+
+.monthHeader {
+	height: 50px;
+	margin-bottom: 20px;
+	box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.3);
+	border-radius: 3px;
+}
+
+.events {
+	height: 500px;
+	border: 1px solid grey;
+}
+
+.clickable:not(.selectedDate):not(.today):hover {
+	border-radius: 3px;
+	background-color: rgba(0, 0, 0, 0.2);
+	cursor: pointer;
+}
+
+.clickable:not(.selectedDate):not(.today):active {
+	background-color: rgba(0, 0, 0, 0.3);
+}
+
+.today {
+	background-color: rgba(255, 165, 0, 0.7);
+}
+
+.today:hover {
+	background-color: rgba(255, 165, 0, 0.8);
+}
+
+.selectedDate:not(.today) {
+	background-color: rgba(255, 165, 0, 0.4);
+}
+
+.selectedDate:not(.today):hover {
+	background-color: rgba(255, 165, 0, 0.5);
+}
+
+.w-25 {
+	width: 25%;
+}
+
+.w-75 {
+	width: 75%;
+}
+
+.row {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	box-sizing: border-box;
+}
+
+.column {
+	display: flex;
+	flex-direction: column;
+}
+
+.h-100 {
+	height: 100%;
+}
+
+.w-flex {
+	flex: 1 1;
+}
+
+.wrap {
+	flex-wrap: wrap;
+}
+
+.hide {
+	display: none;
+}
+
+.x-left {
+	justify-content: flex-start;
+}
+
+.x-center {
+	justify-content: center;
+	text-align: center;
+}
+
+.x-right {
+	justify-content: flex-end;
+}
+
+.y-top {
+	align-items: flex-start;
+}
+
+.y-center {
+	align-items: center;
+}
+
+.y-bottom {
+	align-items: flex-end;
+}
+</style>
