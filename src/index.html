@@ -1,5 +1,9 @@
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script src="https://cdn.jsdelivr.net/gh/krishnzzz/scsmath-data@14ca027/calendar.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/gh/krishnzzz/scsmath-data/src/cal-dates.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/krishnzzz/scsmath-data/src/cal-events.js"></script> -->
+<script src="cal-dates.js"></script>
+<script src="cal-events.js"></script>
 <div id="app">
 	<div class="row w-flex x-center y-center monthHeader">
 		<div class="row h-100 w-flex x-center y-center clickable" @click="getPrev">{{ '<' }}</div> <div class="row h-100 w-flex x-center y-center clickable">{{ months[monthIndex].name }} {{ year }}</div>
@@ -15,6 +19,12 @@
 			</div>
 		</div>
 		<div class="w-25 events">
+			<div class="title row x-center y-center">{{ selectedDate.date + ' ' + months[selectedDate.month].name + ' ' + selectedDate.year }}{{ selectedDate.dateDetails ? ': ' + selectedDate.dateDetails['lunar-day'].replace(/-/g, ' ') : '' }}</div>
+			<div v-if="selectedDate.dateDetails">
+				<div class="event clickable not" v-if="selectedDate.dateDetails.special">{{ selectedDate.dateDetails.special }}</div>
+				<div class="event clickable not" v-if="selectedDate.dateDetails.paran">Paran between {{ selectedDate.dateDetails.paran }}</div>
+				<a v-for="(event, eventIndex) in selectedDate.eventDetails" :href="event.link" target="_blank" class="event clickable row" :class="{ not: !event.link }">{{ event.name }}</a>
+			</div>
 		</div>
 	</div>
 </div>
@@ -32,22 +42,27 @@ var app = new Vue({
 			dayLastIndex: 0,
 			day1Index: 0,
 			year: 0,
-			selectedDate: {}
+			selectedDate: {},
+			calDates: dates,
+			calEvents: events
 		}
 	},
 	created: function() {
 		var vm = this;
-		var today = new Date()
+		var today = new Date();
 		vm.today = {
 			date: today.getDate(),
 			day: today.getDay(),
 			month: today.getMonth(),
 			year: today.getFullYear()
 		}
+		vm.today.date = 29;
 		vm.monthIndex = vm.today.month;
 		vm.year = vm.today.year;
 		vm.checkFeb();
 		vm.getMonth(vm.today.date, vm.today.day);
+		vm.selectDate(vm.today.date, vm.today.day);
+		// console.log(vm.calDates);
 	},
 	methods: {
 		getMonth: function(date, dateIndex) {
@@ -121,13 +136,18 @@ var app = new Vue({
 			}
 		},
 		selectDate: function(date, day) {
-			var vm = this;
+			var vm = this,
+				details;
 			if (date) {
 				vm.selectedDate = {
 					date: date,
 					month: vm.monthIndex,
 					year: vm.year,
 					day: day
+				}
+				if (vm.calDates[vm.months[vm.selectedDate.month].name] && vm.calDates[vm.months[vm.selectedDate.month].name]['date-' + vm.selectedDate.date]) {
+					vm.selectedDate.dateDetails = vm.calDates[vm.months[vm.selectedDate.month].name]['date-' + vm.selectedDate.date];
+					vm.selectedDate.eventDetails = vm.calEvents[vm.selectedDate.dateDetails['lunar-day']];
 				}
 			}
 		}
@@ -155,15 +175,36 @@ var app = new Vue({
 	border-radius: 3px;
 }
 
+.event {
+	padding: 10px;
+	text-align: left;
+}
+
 .events {
 	height: 500px;
-	border: 1px solid grey;
+	margin-left: 10px;
+	box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.3);
+	overflow: auto;
+}
+
+.events .title {
+	padding: 10px 0;
+	background-image: linear-gradient(rgba(255, 165, 0, 0.4), rgba(255, 165, 0, 0.8));
 }
 
 .clickable:not(.selectedDate):not(.today):hover {
 	border-radius: 3px;
 	background-color: rgba(0, 0, 0, 0.2);
 	cursor: pointer;
+}
+
+.clickable.not {
+	cursor: default !important;
+}
+
+a {
+	text-decoration: none;
+	color: black;
 }
 
 .clickable:not(.selectedDate):not(.today):active {
