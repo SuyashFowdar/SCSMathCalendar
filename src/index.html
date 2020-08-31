@@ -1,30 +1,62 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-<script src="https://cdn.jsdelivr.net/gh/krishnzzz/scsmath-data@14ca027/calendar.js"></script>
-<!-- <script src="https://cdn.jsdelivr.net/gh/krishnzzz/scsmath-data/src/cal-dates.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/krishnzzz/scsmath-data/src/cal-events.js"></script> -->
-<script src="cal-dates.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/gh/krishnzzz/scsmath-data@f9edfe8/src/cal-dates.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/krishnzzz/scsmath-data@f9edfe8/src/cal-events.js"></script> -->
+<script src="cal-countries.js"></script>
 <script src="cal-events.js"></script>
 <div id="app">
 	<div class="row w-flex x-center y-center monthHeader">
 		<div class="row h-100 w-flex x-center y-center clickable" @click="getPrev">{{ '<' }}</div> <div class="row h-100 w-flex x-center y-center clickable">{{ months[monthIndex].name }} {{ year }}</div>
 		<div class="row h-100 w-flex x-center y-center clickable" @click="getNext">{{ '>' }}</div>
 	</div>
-	<div class="row x-center">
-		<div class="column month w-75">
+	<div class="container x-center">
+		<div class="column month">
 			<div class="row">
 				<div class="row w-flex x-center day" v-for="(day, dayIndex) in days">{{ day.substring(0, 3) }}</div>
 			</div>
 			<div class="row w-flex" v-for="(week, weekIndex) in month">
-				<div v-for="(date, dateIndex) in week" :class="{ selectedDate:  monthIndex === selectedDate.month && year == selectedDate.year && date == selectedDate.date, today: monthIndex === today.month && year == today.year && date == today.date}" class="w-flex row x-center y-center date clickable" @click="selectDate(date, days[dateIndex])">{{ date }}</div>
+				<div v-for="(date, dateIndex) in week" :class="{ selectedDate:  monthIndex === selectedDate.month && year == selectedDate.year && date == selectedDate.date, today: monthIndex === today.month && year == today.year && date == today.date}" class="w-flex row x-center y-center date clickable" @click="selectDate(date, days[dateIndex])">
+					{{ date }}
+					<div class="dot red row x-center y-center" v-if="calDates[year + '-' + months[monthIndex].name + '-' + date] && calDates[year + '-' + months[monthIndex].name + '-' + date].ekadashi"></div>
+					<div class="dot blue row x-center y-center" v-if="calDates[year + '-' + months[monthIndex].name + '-' + date] && calEvents[calDates[year + '-' + months[monthIndex].name + '-' + date]['lunar-day']] && ((calDates[year + '-' + months[monthIndex].name + '-' + date].ekadashi && calEvents[calDates[year + '-' + months[monthIndex].name + '-' + date]['lunar-day']].length > 1) || (!calDates[year + '-' + months[monthIndex].name + '-' + date].ekadashi && calEvents[calDates[year + '-' + months[monthIndex].name + '-' + date]['lunar-day']].length) || (calDates[year + '-' + months[monthIndex].name + '-' + date].paran) || (calDates[year + '-' + months[monthIndex].name + '-' + date].special))">
+						{{ calDates[year + '-' + months[monthIndex].name + '-' + date].ekadashi ? calEvents[calDates[year + '-' + months[monthIndex].name + '-' + date]['lunar-day']].length - 1 : calEvents[calDates[year + '-' + months[monthIndex].name + '-' + date]['lunar-day']].length }}
+					</div>
+				</div>
 			</div>
 		</div>
-		<div class="w-25 events">
-			<div class="title row x-center y-center">{{ selectedDate.date + ' ' + months[selectedDate.month].name + ' ' + selectedDate.year }}{{ selectedDate.dateDetails ? ': ' + selectedDate.dateDetails['lunar-day'].replace(/-/g, ' ') : '' }}</div>
-			<div v-if="selectedDate.dateDetails">
-				<div class="event clickable not" v-if="selectedDate.dateDetails.special">{{ selectedDate.dateDetails.special }}</div>
-				<div class="event clickable not" v-if="selectedDate.dateDetails.paran">Paran between {{ selectedDate.dateDetails.paran }}</div>
+		<div class="events">
+			<div class="title row x-center y-center" v-if="view !== 'search'">
+				<div class="w-20 clickable h-100 row y-center x-center" @click="view = 'all';">See all</div>
+				<div class="w-flex">
+					<div v-if="view === 'selected'">{{ selectedDate.date + ' ' + months[selectedDate.month].name + ' ' + selectedDate.year }}</div>
+				</div>
+				<div class="w-10 clickable h-100 row y-center x-center" @click="goTo(today)" title="Go to Today" v-if="view !== 'all'">↩️</div>
+				<div class="w-10 clickable h-100 row y-center x-center" title="Search event" @click="toggleSearch">🔍</div>
+				<div class="cancel clickable w-10 search row x-center y-center" @click="view = 'selected'" v-if="view === 'all'">❌</div>
+			</div>
+			<div v-else class="row">
+				<input type="text" v-model="searchText" id="search" class="w-flex search" placeholder="Search event">
+				<div class="cancel clickable w-10 search row x-center y-center" @click="view = 'selected'">❌</div>
+			</div>
+			<div v-if="view === 'selected' && selectedDate.dateDetails" class="list">
+				<div class="row x-center y-center lunar">{{ selectedDate.dateDetails['lunar-day'].replace(/-/g, ' ') }}</div>
+				<div class="event clickable not special" v-if="selectedDate.dateDetails.special">{{ selectedDate.dateDetails.special }}</div>
+				<div class="event clickable not special" v-if="selectedDate.dateDetails.paran">Paran between {{ selectedDate.dateDetails.paran }}</div>
 				<a v-for="(event, eventIndex) in selectedDate.eventDetails" :href="event.link" target="_blank" class="event clickable row" :class="{ not: !event.link }">{{ event.name }}</a>
 			</div>
+			<div v-else-if="view === 'all'" class="list">
+				<div v-for="(day, date) in calDates" class="clickable column" @click="selectEvent(date)">
+					<div style="font-weight: bold; background-color: lightyellow;" class="event">{{ date }}</div>
+					<div v-for="event in calEvents[day['lunar-day']]" class="event">{{ event.name }}</div>
+				</div>
+			</div>
+			<div v-else-if="view === 'search'" class="list">
+				<div v-for="event in filteredEvents" class="clickable column" @click="selectEvent(event.date)">
+					<div style="font-weight: bold; background-color: lightyellow;" class="event">{{ event.date }}</div>
+					<div class="event">{{ event.name }}</div>
+				</div>
+			</div>
+			<div v-else class="list"></div>
 		</div>
 	</div>
 </div>
@@ -33,18 +65,21 @@ var app = new Vue({
 	el: '#app',
 	data: function() {
 		return {
-			message: 'Hello Vue!',
+			view: 'selected',
 			month: [],
 			monthIndex: 0,
 			today: {},
-			months: [{ name: 'January', days: 31 }, { name: 'February', days: 28 }, { name: 'March', days: 31 }, { name: 'April', days: 30 }, { name: 'May', days: 31 }, { name: 'June', days: 30 }, { name: 'July', days: 31 }, { name: 'August', days: 31 }, { name: 'September', days: 30 }, { name: 'October', days: 31 }, { name: 'November', days: 30 }, { name: 'December', days: 31 }],
+			months: [{ name: 'January', days: 31 }, { name: 'February', days: 28 }, { name: 'March', days: 31 }, { name: 'April', days: 35 }, { name: 'May', days: 31 }, { name: 'June', days: 35 }, { name: 'July', days: 31 }, { name: 'August', days: 31 }, { name: 'September', days: 35 }, { name: 'October', days: 31 }, { name: 'November', days: 35 }, { name: 'December', days: 31 }],
 			days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
 			dayLastIndex: 0,
 			day1Index: 0,
 			year: 0,
 			selectedDate: {},
-			calDates: dates,
-			calEvents: events
+			searchText: '',
+			calDates: countries['Port Louis'],
+			calEvents: events,
+			filteredEvents: [],
+			cityList: ["Almaty", "Ankara", "Barcelona", "Barnaul", "Bogota", "Budapest", "Buffalo", "Byron Bay", "Caracas", "Chelyabinsk", "ChiangMai", "Delhi", "Dnepropetrovsk", "Donetsk", "Guadalajara", "Haifa", "Herson", "Honolulu", "Johannesburg", "Kazan", "Khabarovsk", "Khanty Mansiysk", "Kharkiv", "Krasnodar", "Krasnoyarsk", "Kuala Lumpur", "Kyiv", "Lima", "London", "Luhansk", "Luxembourg", "Lviv", "Maalot Tarshiha", "Manila", "Merida", "Merom Golan", "Mexico City", "Miami", "Milan", "Minsk", "Morelia", "Moscow", "Nabadwip", "New York", "Nizhny Novgorod", "Novgorod The Great", "Novosibirsk", "Odessa", "Omsk", "Orenburg", "Perm", "Port Luis", "Prague", "Quito", "Riga", "Rome", "Rostov-on-Don", "Saint Petersburg", "Salt Lake City", "Samara", "San Luis Potosi", "Sau Paulo", "Shenzhen", "Simferopol", "Smolensk", "Sochi", "Soquel", "Sukhum", "Surgut", "Sydney", "Tijuana", "Timmins", "Tolyatti", "Tomsk", "Ufa", "Uki", "Vancouver", "Veracruz", "Vinnitsa", "Vladivostok", "Volgograd", "Voronezh", "Wroclaw", "Yaroslavl", "Yekaterinburg", "Yoshkar Ola", "Yuzhno-Sakhalinsk", "Zaporizhia"]
 		}
 	},
 	created: function() {
@@ -56,13 +91,7 @@ var app = new Vue({
 			month: today.getMonth(),
 			year: today.getFullYear()
 		}
-		vm.today.date = 29;
-		vm.monthIndex = vm.today.month;
-		vm.year = vm.today.year;
-		vm.checkFeb();
-		vm.getMonth(vm.today.date, vm.today.day);
-		vm.selectDate(vm.today.date, vm.today.day);
-		// console.log(vm.calDates);
+		vm.goTo(vm.today);
 	},
 	methods: {
 		getMonth: function(date, dateIndex) {
@@ -145,23 +174,109 @@ var app = new Vue({
 					year: vm.year,
 					day: day
 				}
-				if (vm.calDates[vm.months[vm.selectedDate.month].name] && vm.calDates[vm.months[vm.selectedDate.month].name]['date-' + vm.selectedDate.date]) {
-					vm.selectedDate.dateDetails = vm.calDates[vm.months[vm.selectedDate.month].name]['date-' + vm.selectedDate.date];
+				if (vm.calDates[vm.year + '-' + vm.months[vm.selectedDate.month].name + '-' + vm.selectedDate.date]) {
+					vm.selectedDate.dateDetails = vm.calDates[vm.year + '-' + vm.months[vm.selectedDate.month].name + '-' + vm.selectedDate.date];
 					vm.selectedDate.eventDetails = vm.calEvents[vm.selectedDate.dateDetails['lunar-day']];
+				}
+				vm.view = 'selected';
+			}
+		},
+		goTo: function(date) {
+			var vm = this;
+			vm.monthIndex = date.month;
+			vm.year = date.year;
+			vm.checkFeb();
+			vm.getMonth(date.date, date.day);
+			vm.selectDate(date.date, date.day);
+		},
+		selectEvent: function(dateText) {
+			var vm = this;
+			var date = new Date(dateText);
+			vm.goTo({
+				date: date.getDate(),
+				day: date.getDay(),
+				month: date.getMonth(),
+				year: date.getFullYear()
+			});
+		},
+		toggleSearch: function() {
+			this.view = 'search';
+			setTimeout(function() {
+				document.getElementById('search').focus();
+			}, 100)
+		}
+	},
+	watch: {
+		searchText: function() {
+			var vm = this,
+				keys = Object.keys(vm.calEvents);
+			vm.filteredEvents = [];
+			for (var i = 0; i < keys.length; i++) {
+				var items = vm.calEvents[keys[i]];
+				for (var j = 0; j < items.length; j++) {
+					if (items[j].name.toLowerCase().indexOf(vm.searchText.toLowerCase()) > -1) {
+						for (var k = 0, dateKeys = Object.keys(vm.calDates); k < dateKeys.length; k++) {
+							if (vm.calDates[dateKeys[k]]['lunar-day'] == keys[i]) {
+								vm.filteredEvents.push({ date: dateKeys[k], name: items[j].name, 'lunar-day': keys[i] });
+							}
+						}
+					}
 				}
 			}
 		}
 	}
 })
+
+function clickSelf(e) {
+	console.log('Funct');
+	e.target.click();
+}
 </script>
 <style>
-.month {
-	max-width: 500px;
+@media screen and (min-width: 0px) and (max-width: 959px) {
+	.container {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.month {
+		width: 100%;
+		height: 40vh;
+	}
+
+	.events {
+		width: 100%;
+		margin-left: 0;
+	}
+
+	.events .list {
+		height: 40vh;
+	}
+}
+
+@media screen and (min-width: 960px) {
+	.container {
+		display: flex;
+		flex-direction: row;
+	}
+
+	.month {
+		width: 65%;
+	}
+
+	.events {
+		width: 35%;
+		margin-left: 10px;
+	}
+
+	.events .list {
+		height: 500px;
+	}
 }
 
 .date {
-	cursor: pointer;
 	border-radius: 3px;
+	position: relative;
 }
 
 .day {
@@ -181,15 +296,21 @@ var app = new Vue({
 }
 
 .events {
-	height: 500px;
-	margin-left: 10px;
+	min-width: 200px;
 	box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.3);
+}
+
+.events .list {
 	overflow: auto;
 }
 
 .events .title {
-	padding: 10px 0;
+	height: 40px;
 	background-image: linear-gradient(rgba(255, 165, 0, 0.4), rgba(255, 165, 0, 0.8));
+}
+
+.search {
+	height: 40px;
 }
 
 .clickable:not(.selectedDate):not(.today):hover {
@@ -227,12 +348,50 @@ a {
 	background-color: rgba(255, 165, 0, 0.5);
 }
 
-.w-25 {
-	width: 25%;
+.dot {
+	position: absolute;
+	width: 15px;
+	height: 15px;
+	border-radius: 7.5px;
+	margin-top: 20px;
 }
 
-.w-75 {
-	width: 75%;
+.dot.red {
+	background-color: orangered;
+	margin-left: -10px;
+}
+
+.dot.blue {
+	background-color: goldenrod;
+	margin-left: 10px;
+	font-size: 12px;
+	font-weight: bold;
+	color: white;
+}
+
+.special {
+	border-bottom: 1px solid lightgrey;
+}
+
+.lunar {
+	height: 35px;
+	font-weight: bold;
+}
+
+.w-20 {
+	width: 20%;
+}
+
+.w-10 {
+	width: 10%;
+}
+
+.w-35 {
+	width: 35%;
+}
+
+.w-65 {
+	width: 65%;
 }
 
 .row {

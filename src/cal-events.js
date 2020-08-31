@@ -24,10 +24,8 @@ var events = {
 		"name": "Disappearance of Tridandi Swami Srimad Bhakti Vigraha Bhiksu Goswami Maharaj."
 	}],
 	"Vishnu-Krishna-Ekadashi": [{
-			"name": "Papa Vimochani Ekadashi.Fast."
-		}
-
-	],
+		"name": "Papa Vimochani Ekadashi.Fast."
+	}],
 	"Vishnu-Krishna-Dvadashi": [{
 			"name": "Festival in honour of Sriman Mahaprabhu's auspicious arrival at Varaha Nagar. ",
 			"link": "http://scsmath.com/events/calendar_events/03_VarahaNagar.html"
@@ -89,9 +87,7 @@ var events = {
 			"name": "Varuthini Ekadashi.Fast."
 		}
 	],
-	"Madhusudan-Krishna-Dvadashi": [
-
-	],
+	"Madhusudan-Krishna-Dvadashi": [],
 	"Madhusudan-Amavasya": [{
 		"name": "Appearance of Srila Gadadhar Pandit Goswami.",
 		"link": "http://scsmath.com/events/calendar_events/04_GadadharPandit.html"
@@ -133,9 +129,7 @@ var events = {
 	"Madhusudan-Gaura-Ekadashi": [{
 		"name": "Mohini Ekadashi.Fast."
 	}],
-	"Madhusudan-Gaura-Dvadashi": [
-
-	],
+	"Madhusudan-Gaura-Dvadashi": [],
 	"Madhusudan-Gaura-Chaturdashi": [{
 			"name": "Sri Nrisimha Chaturdashi: appearance day of Sri Nrisimhadev.",
 			"link": "http://scsmath.com/events/calendar_events/05_NrsimhaChaturdasi.html"
@@ -202,9 +196,7 @@ var events = {
 	"Trivikram-Gaura-Ekadashi": [{
 		"name": "Nirjala. Trisprisha Mahadvadashi. Fast."
 	}],
-	"Trivikram-Gaura-Trayodashi": [
-
-	],
+	"Trivikram-Gaura-Trayodashi": [],
 	"Trivikram-Gaura-Trayodashi": [{
 			"name": "Grand festival of Srila Raghunath Das Goswami at Sripat Panihati. ",
 			"link": "http://scsmath.com/events/calendar_events/06_PanihatiFestival.html"
@@ -256,9 +248,7 @@ var events = {
 			"link": "http://scsmath.com/events/calendar_events/06_RamaDevi.html"
 		}
 	],
-	"Vaman-Krishna-Dvadashi": [
-
-	],
+	"Vaman-Krishna-Trayodashi": [],
 	"Vaman-Amavasya": [{
 			"name": "Disappearance of Srila Gadadhar Pandit Goswami.",
 			"link": "http://scsmath.com/events/calendar_events/04_GadadharPandit.html"
@@ -299,9 +289,7 @@ var events = {
 			"name": "Shayan Ekadashi.Fast."
 		}
 	],
-	"Vaman-Gaura-Dvadashi": [
-
-	],
+	"Vaman-Gaura-Dvadashi": [],
 	"Vaman-Purnima": [{
 			"name": "Sri Guru Purnima. ",
 			"link": "http://scsmath.com/events/calendar_events/07_GuruPurnima_Chaturmasya.html"
@@ -338,9 +326,7 @@ var events = {
 	"Sridhar-Krishna-Ekadashi": [{
 		"name": "Kamika Ekadashi. Fast."
 	}],
-	"Sridhar-Krishna-Dvadashi": [
-
-	],
+	"Sridhar-Krishna-Dvadashi": [],
 	"Sridhar-Amavasya": [{
 		"name": "Festival in honour of the disappearance of Om Vishnupad Paramahamsa Parivrajakacharya-varya Ashtottara-shata-sri Srila Bhakti Raksak Sridhar Dev-Goswami Maharaj.",
 		"link": "http://scsmath.com/events/calendar_events/07_SrilaGuruMaharaj.html"
@@ -415,9 +401,7 @@ var events = {
 	"Hrishikesh-Krishna-Ekadashi": [{
 		"name": "Annada Ekadashi. Fast."
 	}],
-	"Hrishikesh-Krishna-Dvadashi": [
-
-	],
+	"Hrishikesh-Krishna-Dvadashi": [],
 	"Hrishikesh-Gaura-Panchami": [{
 		"name": "Appearance of Sri Sita Devi, the consort of Sri Advaita Prabhu.",
 		"link": "http://scsmath.com/events/calendar_events/09_Sita_ConsortOfAdvaitaAcharya.html"
@@ -464,21 +448,15 @@ var events = {
 	"Padmanabha-Krishna-Ekadashi": [{
 		"name": "Indira Ekadashi.Fast."
 	}],
-	"Padmanabha-Krishna-Dvadashi": [
-
-	],
+	"Padmanabha-Krishna-Dvadashi": [],
 	"Purushottam-Gaura-Ekadashi": [{
 		"name": "Padmini Ekadashi. Fast."
 	}],
-	"Purushottam-Gaura-Dvadashi": [
-
-	],
+	"Purushottam-Gaura-Dvadashi": [],
 	"Purushottam-Krishna-Ekadashi": [{
 		"name": "Parama Ekadashi. Fast."
 	}],
-	"Purushottam-Krishna-Dvadashi": [
-
-	],
+	"Purushottam-Krishna-Dvadashi": [],
 	"Padmanabha-Gaura-Pratipad": [{
 		"name": "Appearance festival of Sri Chaitanya Saraswat Math Acharya and Sevaite Srila Bhakti Nirmal Acharya Maharaj."
 	}],
@@ -628,9 +606,7 @@ var events = {
 			"name": "Vyanjuli Mahadvadashi.Fast."
 		}
 	],
-	"Damodar-Gaura-Dvadashi": [
-
-	],
+	"Damodar-Gaura-Trayodashi": [],
 	"Damodar-Gaura-Chaturdashi": [{
 			"name": "Disappearance of Srila Bhugarbha Goswami.",
 			"link": "http://scsmath.com/events/calendar_events/11_BhugarbhaGoswami_KashishvarPandit.html"
@@ -700,9 +676,7 @@ var events = {
 			"link": "http://scsmath.com/events/calendar_events/12_Christmas.html"
 		}
 	],
-	"Keshava-Gaura-Dvadashi": [
-
-	],
+	"Keshava-Gaura-Dvadashi": [],
 	"Narayana-Krishna-Dvitiya": [{
 			"name": "The grand 92nd appearance day celebration of Sri Chaitanya Saraswat Math's Sevaite-President-Acharya, Om Vishnupad Paramahamsa Parivrajakacharya Sri Srimad Bhakti Sundar Govinda Dev-Goswami Maharaj.",
 			"link": "http://scsmath.com/events/calendar_events/12_SrilaGovindaMaharaj-VyasaPuja.html"
@@ -765,9 +739,7 @@ var events = {
 			"link": "http://scsmath.com/events/calendar_events/01_JagadishPandit.html"
 		}
 	],
-	"Narayana-Gaura-Dvadashi": [
-
-	],
+	"Narayana-Gaura-Dvadashi": [],
 	"Narayana-Purnima": [{
 			"name": "Pushyabhisheka Yatra of Sri Krishna. "
 		},
@@ -802,9 +774,7 @@ var events = {
 	"Madhava-Krishna-Ekadashi": [{
 		"name": "Shat-tila Ekadashi. Fast."
 	}],
-	"Madhava-Krishna-Trayodashi": [
-
-	],
+	"Madhava-Krishna-Trayodashi": [],
 	"Madhava-Gaura-Pratipad": [{
 			"name": "Disappearance of Tridandi Swami Srimad Bhakti Gaurava Vaikhanas Maharaj."
 		},
@@ -911,9 +881,7 @@ var events = {
 			"name": "Disappearance of Sripad Krishna Govinda Das Adhikari."
 		}
 	],
-	"Govinda-Krishna-Dvadashi": [
-
-	],
+	"Govinda-Krishna-Dvadashi": [],
 	"Govinda-Krishna-Chaturdashi": [{
 			"name": "Sri Sri Shivaratri (optional fast). ",
 			"link": "http://scsmath.com/events/calendar_events/03_Siva.html"
