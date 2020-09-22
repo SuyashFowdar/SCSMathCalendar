@@ -3,7 +3,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 	<script src="src/cal-events.js"></script>
 </head>
-<div id="app" :class="mobile ? 'mob' : 'desk'">
+<div id="app">
 	<div class="header">
 		<div class="row w-flex x-center y-center monthSelect" v-if="selectedCity !== 'Select City...'">
 			<div class="row h-100 w-flex x-center y-center clickable" @click="getPrev">{{ '<' }}</div> <div class="row h-100 w-flex x-center y-center clickable">{{ months[monthIndex].name }} {{ year }}</div>
@@ -27,9 +27,9 @@
 			<div class="row w-flex" v-for="(week, weekIndex) in month">
 				<div v-for="(date, dateIndex) in week" :class="{ selectedDate:  monthIndex === selectedDate.month && year == selectedDate.year && date == selectedDate.date, today: monthIndex === today.month && year == today.year && date == today.date}" class="w-flex row x-center y-center date clickable" @click="selectDate(date, days[dateIndex])">
 					{{ date }}
-					<div class="dot red row x-center y-center" v-if="calDates[year + '-' + months[monthIndex].name + '-' + date] && calDates[year + '-' + months[monthIndex].name + '-' + date].ekadashi"></div>
-					<div class="dot blue row x-center y-center" v-if="calDates[year + '-' + months[monthIndex].name + '-' + date] && calEvents[calDates[year + '-' + months[monthIndex].name + '-' + date]['lunar-day']] && ((calDates[year + '-' + months[monthIndex].name + '-' + date].ekadashi && calEvents[calDates[year + '-' + months[monthIndex].name + '-' + date]['lunar-day']].length > 1) || (!calDates[year + '-' + months[monthIndex].name + '-' + date].ekadashi && calEvents[calDates[year + '-' + months[monthIndex].name + '-' + date]['lunar-day']].length) || (calDates[year + '-' + months[monthIndex].name + '-' + date].paran) || (calDates[year + '-' + months[monthIndex].name + '-' + date].special))">
-						{{ calDates[year + '-' + months[monthIndex].name + '-' + date].ekadashi ? calEvents[calDates[year + '-' + months[monthIndex].name + '-' + date]['lunar-day']].length - 1 : calEvents[calDates[year + '-' + months[monthIndex].name + '-' + date]['lunar-day']].length }}
+					<div class="dot red row x-center y-center" v-if="calDates[selectedCity][year + '-' + months[monthIndex].name + '-' + date] && calDates[selectedCity][year + '-' + months[monthIndex].name + '-' + date].ekadashi"></div>
+					<div class="dot blue row x-center y-center" v-if="calDates[selectedCity][year + '-' + months[monthIndex].name + '-' + date] && calEvents[calDates[selectedCity][year + '-' + months[monthIndex].name + '-' + date]['lunar-day']] && ((calDates[selectedCity][year + '-' + months[monthIndex].name + '-' + date].ekadashi && calEvents[calDates[selectedCity][year + '-' + months[monthIndex].name + '-' + date]['lunar-day']].length > 1) || (!calDates[selectedCity][year + '-' + months[monthIndex].name + '-' + date].ekadashi && calEvents[calDates[selectedCity][year + '-' + months[monthIndex].name + '-' + date]['lunar-day']].length) || (calDates[selectedCity][year + '-' + months[monthIndex].name + '-' + date].paran) || (calDates[selectedCity][year + '-' + months[monthIndex].name + '-' + date].special))">
+						{{ calDates[selectedCity][year + '-' + months[monthIndex].name + '-' + date].ekadashi ? calEvents[calDates[selectedCity][year + '-' + months[monthIndex].name + '-' + date]['lunar-day']].length - 1 : calEvents[calDates[selectedCity][year + '-' + months[monthIndex].name + '-' + date]['lunar-day']].length }}
 					</div>
 				</div>
 			</div>
@@ -40,13 +40,21 @@
 				<div class="w-flex">
 					<div v-if="view === 'selected'">{{ selectedDate.date + ' ' + months[selectedDate.month].name + ' ' + selectedDate.year }}</div>
 				</div>
-				<div class="w-10 clickable h-100 row y-center x-center" @click="goTo(today)" title="Go to Today" v-if="view !== 'all'">↶</div>
-				<div class="w-10 clickable h-100 row y-center x-center" title="Search event" @click="toggleSearch">🔍</div>
-				<div class="cancel clickable w-10 search row x-center y-center" @click="view = 'selected'" v-if="view === 'all'">❌</div>
+				<div class="w-10 clickable h-100 row y-center x-center" @click="goTo(today)" title="Go to Today" v-if="view !== 'all'">
+					<img src="img/back.png" alt="Today" height="15">
+				</div>
+				<div class="w-10 clickable h-100 row y-center x-center" title="Search event" @click="toggleSearch">
+					<img src="img/search.png" alt="Search" height="15">
+				</div>
+				<div class="cancel clickable w-10 search row x-center y-center" @click="view = 'selected'" v-if="view === 'all'">
+					<img src="img/close.png" alt="Close" height="15">
+				</div>
 			</div>
 			<div v-else class="row">
 				<input type="text" v-model="searchText" id="search" class="w-flex search" placeholder="Search event">
-				<div class="cancel clickable w-10 search row x-center y-center" @click="view = 'selected'">❌</div>
+				<div class="cancel clickable w-10 search row x-center y-center" @click="view = 'selected'">
+					<img src="img/close.png" alt="Close" height="15">
+				</div>
 			</div>
 			<div v-if="view === 'selected' && selectedDate.dateDetails" class="list">
 				<div class="row x-center y-center lunar">{{ selectedDate.dateDetails['lunar-day'].replace(/-/g, ' ') }}</div>
@@ -55,7 +63,7 @@
 				<a v-for="(event, eventIndex) in selectedDate.eventDetails" :href="event.link" target="_blank" class="event clickable row" :class="{ not: !event.link }">{{ event.name }}</a>
 			</div>
 			<div v-else-if="view === 'all'" class="list">
-				<div v-for="(day, date) in calDates" class="clickable column" @click="selectEvent(date)">
+				<div v-for="(day, date) in calDates[selectedCity]" class="clickable column" @click="selectEvent(date)">
 					<div style="font-weight: bold; background-color: lightyellow;" class="event">{{ date }}</div>
 					<div v-for="event in calEvents[day['lunar-day']]" class="event">{{ event.name }}</div>
 				</div>
@@ -92,9 +100,7 @@ var app = new Vue({
 			showCityList: false,
 			filteredEvents: [],
 			cityList2: ['Delhi', 'Port Louis'],
-			cityList: ["Almaty", "Ankara", "Barcelona", "Barnaul", "Bogota", "Budapest", "Buffalo", "Byron Bay", "Caracas", "Chelyabinsk", "ChiangMai", "Delhi", "Dnepropetrovsk", "Donetsk", "Guadalajara", "Haifa", "Herson", "Honolulu", "Johannesburg", "Kazan", "Khabarovsk", "Khanty Mansiysk", "Kharkiv", "Krasnodar", "Krasnoyarsk", "Kuala Lumpur", "Kyiv", "Lima", "London", "Luhansk", "Luxembourg", "Lviv", "Maalot Tarshiha", "Manila", "Merida", "Merom Golan", "Mexico City", "Miami", "Milan", "Minsk", "Morelia", "Moscow", "Nabadwip", "New York", "Nizhny Novgorod", "Novgorod The Great", "Novosibirsk", "Odessa", "Omsk", "Orenburg", "Perm", "Port Louis", "Prague", "Quito", "Riga", "Rome", "Rostov-on-Don", "Saint Petersburg", "Salt Lake City", "Samara", "San Luis Potosi", "Sau Paulo", "Shenzhen", "Simferopol", "Smolensk", "Sochi", "Soquel", "Sukhum", "Surgut", "Sydney", "Tijuana", "Timmins", "Tolyatti", "Tomsk", "Ufa", "Uki", "Vancouver", "Veracruz", "Vinnitsa", "Vladivostok", "Volgograd", "Voronezh", "Wroclaw", "Yaroslavl", "Yekaterinburg", "Yoshkar Ola", "Yuzhno-Sakhalinsk", "Zaporizhia"],
-			mobile: false,
-			countryUrl: 'cal-countries.js'
+			cityList: ["Almaty", "Ankara", "Barcelona", "Barnaul", "Bogota", "Budapest", "Buffalo", "Byron Bay", "Caracas", "Chelyabinsk", "ChiangMai", "Delhi", "Dnepropetrovsk", "Donetsk", "Guadalajara", "Haifa", "Herson", "Honolulu", "Johannesburg", "Kazan", "Khabarovsk", "Khanty Mansiysk", "Kharkiv", "Krasnodar", "Krasnoyarsk", "Kuala Lumpur", "Kyiv", "Lima", "London", "Luhansk", "Luxembourg", "Lviv", "Maalot Tarshiha", "Manila", "Merida", "Merom Golan", "Mexico City", "Miami", "Milan", "Minsk", "Morelia", "Moscow", "Nabadwip", "New York", "Nizhny Novgorod", "Novgorod The Great", "Novosibirsk", "Odessa", "Omsk", "Orenburg", "Perm", "Port Louis", "Prague", "Quito", "Riga", "Rome", "Rostov-on-Don", "Saint Petersburg", "Salt Lake City", "Samara", "San Luis Potosi", "Sau Paulo", "Shenzhen", "Simferopol", "Smolensk", "Sochi", "Soquel", "Sukhum", "Surgut", "Sydney", "Tijuana", "Timmins", "Tolyatti", "Tomsk", "Ufa", "Uki", "Vancouver", "Veracruz", "Vinnitsa", "Vladivostok", "Volgograd", "Voronezh", "Wroclaw", "Yaroslavl", "Yekaterinburg", "Yoshkar Ola", "Yuzhno-Sakhalinsk", "Zaporizhia"]
 		}
 	},
 	created: function() {
@@ -111,10 +117,6 @@ var app = new Vue({
 
 		if (city) {
 			vm.selectCity(city);
-		}
-
-		if (vm.detectMob()) {
-			vm.mobile = true;
 		}
 	},
 	methods: {
@@ -213,8 +215,8 @@ var app = new Vue({
 					year: vm.year,
 					day: day
 				}
-				if (vm.calDates[vm.year + '-' + vm.months[vm.selectedDate.month].name + '-' + vm.selectedDate.date]) {
-					vm.selectedDate.dateDetails = vm.calDates[vm.year + '-' + vm.months[vm.selectedDate.month].name + '-' + vm.selectedDate.date];
+				if (vm.calDates[vm.selectedCity][vm.year + '-' + vm.months[vm.selectedDate.month].name + '-' + vm.selectedDate.date]) {
+					vm.selectedDate.dateDetails = vm.calDates[vm.selectedCity][vm.year + '-' + vm.months[vm.selectedDate.month].name + '-' + vm.selectedDate.date];
 					vm.selectedDate.eventDetails = vm.calEvents[vm.selectedDate.dateDetails['lunar-day']];
 				}
 				vm.view = 'selected';
@@ -247,17 +249,23 @@ var app = new Vue({
 		selectCity: function(city) {
 			var vm = this;
 			vm.showCityList = false;
-			let countryScript = document.createElement('script');
-			countryScript.setAttribute('src', 'src/cal-' + city + '.js');
-			let arg = "window.app.loadCity('" + city + "')";
-			countryScript.setAttribute('onload', arg);
-			document.head.appendChild(countryScript);
+			if (!vm.calDates[city]) {
+				let countryScript = document.createElement('script');
+				countryScript.setAttribute('src', 'src/cities/cal-' + city + '.js');
+				let arg = "window.app.loadCity('" + city + "')";
+				countryScript.setAttribute('onload', arg);
+				document.head.appendChild(countryScript);
+			} else {
+				vm.loadCity(city);
+			}
 		},
 		loadCity: function(city) {
 			var vm = this;
 			vm.selectedCity = city;
 			localStorage.city = city;
-			vm.calDates = countries[vm.selectedCity];
+			if (!vm.calDates[city]) {
+				vm.calDates[city] = cityImport;
+			}
 			if (vm.selectedDate && vm.selectedDate.date) {
 				vm.selectDate(vm.selectedDate.date, vm.selectedDate.day);
 			} else {
@@ -274,8 +282,8 @@ var app = new Vue({
 				var items = vm.calEvents[keys[i]];
 				for (var j = 0; j < items.length; j++) {
 					if (items[j].name.toLowerCase().indexOf(vm.searchText.toLowerCase()) > -1) {
-						for (var k = 0, dateKeys = Object.keys(vm.calDates); k < dateKeys.length; k++) {
-							if (vm.calDates[dateKeys[k]]['lunar-day'] == keys[i]) {
+						for (var k = 0, dateKeys = Object.keys(vm.calDates[vm.selectedCity]); k < dateKeys.length; k++) {
+							if (vm.calDates[vm.selectedCity][dateKeys[k]]['lunar-day'] == keys[i]) {
 								vm.filteredEvents.push({ date: dateKeys[k], name: items[j].name, 'lunar-day': keys[i] });
 							}
 						}
@@ -460,6 +468,11 @@ a {
 @media screen and (max-width: 800px) {
 	.header {
 		flex-direction: column-reverse;
+	}
+
+	.monthSelect>div:nth-child(odd) {
+		width: 20%;
+		flex: none;
 	}
 
 	.container {
