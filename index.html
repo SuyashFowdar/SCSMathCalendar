@@ -107,8 +107,10 @@ var app = new Vue({
 			year: today.getFullYear()
 		}
 
-		if (vm.selectedCity !== 'Select City...') {
-			vm.goTo(vm.today);
+		let city = localStorage.city;
+
+		if (city) {
+			vm.selectedCity(city);
 		}
 
 		if (vm.detectMob()) {
@@ -254,6 +256,7 @@ var app = new Vue({
 		loadCity: function(city) {
 			var vm = this;
 			vm.selectedCity = city;
+			localStorage.city = city;
 			vm.calDates = countries[vm.selectedCity];
 			if (vm.selectedDate && vm.selectedDate.date) {
 				vm.selectDate(vm.selectedDate.date, vm.selectedDate.day);
